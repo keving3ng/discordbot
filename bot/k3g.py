@@ -27,29 +27,48 @@ async def eight_ball(context):
 
 @client.command(name='github',
                 description="Displays information on a github user given a username.", # desc for specific !help
-                brief="Github user lookup.")# description for the general !help
+                brief="Github user lookup.",
+                category="Commands")# description for the general !help
 async def githubLookup(username):
     github_url = 'https://api.github.com/users/' + username # creates the github api link to specific user
     data = requests.get(github_url).json() # uses requests lib to pull json file from api
 
-    await client.say("Username: "+ str(data['login']) +"\nLocation: "+ str(data['location']) +
-                              "\nNo. of Public Repos: "+ str(data['public_repos']) +"\nFollowers: "
-                              + str(data['followers']) +"\nFollowing:  "+ str(data['following']))
-
+    if 'login' in data:
+        await client.say("Username: "+ str(data['login']) +"\nLocation: "+ str(data['location']) +"\nNo. of Public Repos: "+ str(data['public_repos']) +"\nFollowers: "+ str(data['followers']) +"\nFollowing:  "+ str(data['following']))
+    else:
+        await client.say("Error: User not found")
 
 @client.command(name='crypto',
                 description="Displays current price for a cryptocurrency in USD.", # desc for specific !help
                 brief="Cryptocurrency price check.") # description for the general !help
 async def cryptoprice(symbol):
     coin_url = "https://min-api.cryptocompare.com/data/price?tsyms=USD&fsym=" + symbol
-
     data = requests.get(coin_url).json()
-    await client.say("Price of "+ str(symbol) +" is $" + str(data['USD']) + " USD.")
+
+    if 'USD' in data:
+        await client.say("Price of "+ str(symbol) +" is $" + str(data['USD']) + " USD.")
+    else:
+        await client.say("Error: Invalid symbol")
+
+
+@client.command(name='flip',
+                description="Flips a coin",
+                brief="Coin flip",
+                pass_context=True)
+async def flipacoin(context):
+    coin_values = ['Heads', 'Tails']
+    await client.say(random.choice(coin_values) + ", " + context.message.author.mention)
+
+
+@client.command(description="Link to the source code on Github",
+                brief="Source code link")
+async def source():
+    await client.say("https://github.com/keving3ng/discordbot")
 
 
 @client.event
 async def on_ready():
-    await client.change_presence(game=Game(name="Destruction of Humanity"))
+    await client.change_presence(game=Game(name="memes"))
     print('Logged in as') # Displays bot login information in console
     print(client.user.name)
     print(client.user.id)
