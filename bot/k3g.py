@@ -14,16 +14,9 @@ client = Bot(command_prefix=BOT_PREFIX) # initializes bot using Bot() and prefix
                 aliases=['eight_ball', 'eightball', '8-ball'], # aliases to be displayed in specific !help
                 pass_context=True) # passes information about the sender and message
 async def eight_ball(context):
-    possible_responses = [
-        'That\'s a resounding no',
-        'Absolutely not'
-        'I hope you\'re not serious',
-        'Absolutely definitely',
-        'Honestly? Probably',
-        'It shall occur',
-    ]
+    possible_responses = open("8ball_answers.txt").readlines()
+    possible_responses = [i.strip() for i in possible_responses]
     await client.say(random.choice(possible_responses) + ", " + context.message.author.mention)
-
 
 @client.command(name='github',
                 description="Displays information on a github user given a username.", # desc for specific !help
@@ -76,3 +69,4 @@ async def on_ready():
 
 token_file = open("token.txt", "r") # bot token is stored in this text file
 client.run(token_file.read()) # initializes the bot
+token_file.close()
